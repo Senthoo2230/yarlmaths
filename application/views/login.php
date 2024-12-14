@@ -5,9 +5,21 @@
     <div class="flex flex-col items-center mb-6">
       <img src="<?= base_url('assets/img/logo.png'); ?>" alt="Logo" class="w-24 h-24 mb-4">
       <h1 class="text-2xl font-bold text-sec">Welcome Back</h1>
+      <?php if ($this->session->flashdata('success')): ?>
+            <p class="my-3 rounded-lg text-green-600  bg-green-200 w-full py-4 px-6"><?= $this->session->flashdata('success'); ?></p>
+      <?php endif; ?>
+      <?php
+        if (!empty($error)) {
+          ?>
+            <div class="my-3 rounded-lg text-red-600  bg-red-200 w-full py-4 px-6">
+              <?php echo $error; ?>
+            </div>
+          <?php
+        } 
+      ?>
     </div>
     <!-- Login Form -->
-    <form action="#" method="POST">
+    <form action="<?php echo base_url('admin/signin'); ?>" method="POST">
       <!-- Username Input -->
       <div class="mb-4">
         <label for="username" class="block text-sm font-medium text-gray-600 mb-1">Username</label>

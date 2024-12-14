@@ -46,6 +46,10 @@ public function download($medium,$grade,$term){
 }
 
 public function login(){
+    // Check if the user is already logged in
+    if ($this->session->userdata('logged_in')) {
+        redirect('dashboard'); // Redirect to the dashboard if logged in
+    }
     $this->load->view('header');
     $this->load->view('login');
     $this->load->view('footer');
@@ -59,7 +63,7 @@ public function register(){
 
 public function signup(){
     // Set validation rules
-    $this->form_validation->set_rules('username', 'Username', 'required|is_unique[users.username]');
+    $this->form_validation->set_rules('username', 'Username', 'required');
     $this->form_validation->set_rules('password', 'Password', 'required|min_length[8]');
     $this->form_validation->set_rules('confirm_password', 'Confirm Password', 'required|matches[password]');
     $this->form_validation->set_rules('role', 'Role', 'required|in_list[1,2,3]');
@@ -69,6 +73,77 @@ public function signup(){
         $this->load->view('register');
         $this->load->view('footer');
     }
+    else {
+        // Get form data
+        $data = [
+            'username' => $this->input->post('username'),
+            'password' => md5($this->input->post('password')), // Hash password with MD5
+            'role' => $this->input->post('role'),
+        ];
+
+        // Insert user into the database
+        if ($this->User_model->register_user($data)) {
+            $this->session->set_flashdata('success', 'Registration successful!');
+            redirect('admin'); // Redirect to login or another page
+        } else {
+            $this->session->set_flashdata('error', 'Registration failed. Please try again.');
+            redirect('admin/register'); // Redirect back to the register page
+        }
+    }
+}
+
+public function signin() {
+    
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // Get the form input
+        $username = $this->input->post('username', TRUE);
+        $password = md5($this->input->post('password', TRUE)); // Hash the password
+
+        // Validate user credentials
+        $user = $this->User_model->get_user_by_username_password($username, $password);
+
+        if ($user) {
+            // Set session data
+            $session_data = [
+                'user_id' => $user->id,
+                'username' => $user->username,
+                'role' => $user->role,
+                'logged_in' => TRUE
+            ];
+            $this->session->set_userdata($session_data);
+
+            // Redirect based on role or to a dashboard
+            redirect('dashboard'); // Replace 'dashboard' with your desired URL
+        } else {
+            // Invalid login
+                $data['error'] = "Invalid Username or Password";
+                $this->load->view('header');
+                $this->load->view('login',$data);
+                $this->load->view('footer');
+        }
+    }
+}
+
+public function dashboard(){
+    $this->load->view('header');
+    $this->load->view('dashboard');
+    $this->load->view('footer');
+}
+
+public function papers(){
+    $this->load->view('header');
+    $this->load->view('papers');
+    $this->load->view('footer');
+}
+
+public function logout() {
+    // Destroy session
+    $this->session->unset_userdata('user_data');
+    $this->session->sess_destroy();
+
+    // Redirect to login page
+    redirect('admin');
 }
         
 }
