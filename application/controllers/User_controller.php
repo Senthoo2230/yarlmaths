@@ -4,6 +4,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         
 class User_controller extends CI_Controller {
 
+public function __construct() {
+    parent::__construct();
+    $this->load->model('User_model'); // Load User_model for database operations
+}
+
 public function index(){
     $this->load->view('header');
     $this->load->view('home');
@@ -50,6 +55,20 @@ public function register(){
     $this->load->view('header');
     $this->load->view('register');
     $this->load->view('footer');
+}
+
+public function signup(){
+    // Set validation rules
+    $this->form_validation->set_rules('username', 'Username', 'required|is_unique[users.username]');
+    $this->form_validation->set_rules('password', 'Password', 'required|min_length[8]');
+    $this->form_validation->set_rules('confirm_password', 'Confirm Password', 'required|matches[password]');
+    $this->form_validation->set_rules('role', 'Role', 'required|in_list[1,2,3]');
+    if ($this->form_validation->run() == FALSE) {
+        // Load the register view if validation fails
+        $this->load->view('header');
+        $this->load->view('register');
+        $this->load->view('footer');
+    }
 }
         
 }

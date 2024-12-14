@@ -4,9 +4,12 @@
     <div class="flex flex-col items-center mb-6">
       <img src="<?= base_url('assets/img/logo.png'); ?>" alt="Logo" class="w-24 h-24 mb-4">
       <h1 class="text-2xl font-bold text-sec">Create an Account</h1>
+      <?php if ($this->session->flashdata('error')): ?>
+            <p class="text-red-500 mb-4"><?= $this->session->flashdata('error'); ?></p>
+      <?php endif; ?>
     </div>
     <!-- Register Form -->
-    <form action="#" method="POST">
+    <form action="<?php echo base_url('admin/signup'); ?>" method="POST">
       <!-- Username Input -->
       <div class="mb-4">
         <label for="username" class="block text-sm font-medium text-gray-600 mb-1">Username</label>
@@ -16,6 +19,7 @@
           name="username" 
           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-orange-300 focus:border-orange-300 outline-none"
           placeholder="Enter your username">
+          <?= form_error('username', '<p class="text-red-500 text-xs">', '</p>'); ?>
       </div>
       <!-- Password Input -->
       <div class="mb-4">
@@ -26,16 +30,18 @@
           name="password" 
           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-orange-300 focus:border-orange-300 outline-none"
           placeholder="Enter your password">
+          <?= form_error('password', '<p class="text-red-500 text-xs">', '</p>'); ?>
       </div>
       <!-- Confirm Password Input -->
       <div class="mb-4">
         <label for="confirm-password" class="block text-sm font-medium text-gray-600 mb-1">Confirm Password</label>
         <input 
           type="password" 
-          id="confirm-password" 
-          name="confirm-password" 
+          id="confirm_password" 
+          name="confirm_password" 
           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-orange-300 focus:border-orange-300 outline-none"
           placeholder="Confirm your password">
+          <?= form_error('confirm_password', '<p class="text-red-500 text-xs">', '</p>'); ?>
       </div>
       <!-- Role Selection -->
       <div class="mb-6">
@@ -48,6 +54,7 @@
           <option value="2">Admin</option>
           <option value="3">User</option>
         </select>
+        <?= form_error('role', '<p class="text-red-500 text-xs">', '</p>'); ?>
       </div>
       <!-- Submit Button -->
       <button 

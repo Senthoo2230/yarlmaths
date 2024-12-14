@@ -56,6 +56,7 @@ $route['translate_uri_dashes'] = FALSE;
 // Specific routes for `admin` come first
 $route['admin'] = 'User_controller/login';
 $route['admin/register'] = 'User_controller/register';
+$route['admin/signup'] = 'User_controller/signup';
 
 // Routes for `medium` and other specific patterns
 $route['medium'] = 'User_controller/medium';
