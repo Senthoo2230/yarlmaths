@@ -7,6 +7,7 @@ class User_controller extends CI_Controller {
 public function __construct() {
     parent::__construct();
     $this->load->model('User_model'); // Load User_model for database operations
+    $this->load->library('upload');
 }
 
 public function index(){
@@ -144,6 +145,56 @@ public function logout() {
 
     // Redirect to login page
     redirect('admin');
+}
+
+public function upload(){
+    $this->load->view('header');
+    $this->load->view('upload');
+    $this->load->view('footer');
+}
+
+public function upload_paper(){
+     // Fetch form data
+     $medium = $this->input->post('medium');
+     $grade = $this->input->post('grade');
+     $term = $this->input->post('term');
+
+     // Configure upload settings
+     $config['upload_path'] = './uploads/';
+     $config['allowed_types'] = 'pdf|doc|docx|jpg|png'; // Allowed file types
+     $config['max_size']      = 2048; // Max size in KB (2MB)
+
+     $this->upload->initialize($config);
+
+     if (!$this->upload->do_upload('file')) {
+        // Handle upload error
+        $error = $this->upload->display_errors();
+        echo '<p style="color:red;">' . $error . '</p>';
+    } else {
+        // File uploaded successfully
+        $uploadData = $this->upload->data();
+
+        // Save file and form information in the database
+        $data = [
+            'medium'    => $medium,
+            'grade'     => $grade,
+            'term'      => $term,
+            'file_name' => $uploadData['file_name'],
+            'file_path' => './uploads/' . $uploadData['file_name'],
+        ];
+
+        $this->User_model->insert_paper($data);
+
+        echo '<p style="color:green;">File uploaded successfully!</p>';
+    }
+}
+
+public function test(){
+    if (is_dir('./uploads/') && is_writable('./uploads/')) {
+        echo "Upload folder exists and is writable.";
+    } else {
+        echo "Upload folder is missing or not writable.";
+    }
 }
         
 }

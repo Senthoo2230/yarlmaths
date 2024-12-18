@@ -61,6 +61,9 @@ $route['admin/signin'] = 'User_controller/signin';
 $route['admin/logout'] = 'User_controller/logout';
 $route['dashboard'] = 'User_controller/dashboard';
 $route['dashboard/papers'] = 'User_controller/papers';
+$route['admin/upload'] = 'User_controller/upload';
+$route['paper/upload'] = 'User_controller/upload_paper';
+$route['test'] = 'User_controller/test';
 
 // Routes for `medium` and other specific patterns
 $route['medium'] = 'User_controller/medium';

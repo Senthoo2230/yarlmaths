@@ -24,6 +24,10 @@ public function get_user_by_username_password($username, $password) {
     }
     return FALSE; // No match found
 }
+
+public function insert_paper($data) {
+    $this->db->insert('papers', $data);
+}
                         
 }
                         

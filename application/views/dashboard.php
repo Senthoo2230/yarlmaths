@@ -56,9 +56,11 @@
 
         <!-- Upload Button -->
         <div class="mt-8 flex justify-center">
-            <button class="bg-[#ff6500] text-white px-6 py-3 rounded-lg font-bold hover:bg-[#e05500]">
-                Upload
-            </button>
+            <a href="<?php echo base_url('admin/upload'); ?>">
+                <button class="bg-[#ff6500] text-white px-6 py-3 rounded-lg font-bold hover:bg-[#e05500]">
+                    Upload
+                </button>
+            </a>
         </div>
 
         
