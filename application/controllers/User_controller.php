@@ -37,14 +37,45 @@ public function term($medium,$grade){
     $this->load->view('footer');
 }
 
-public function download($medium,$grade,$term){
+public function download($medium, $grade, $term) {
+    // Initialize data
     $data['medium'] = $medium;
     $data['grade'] = $grade;
     $data['term'] = $term;
+
+    // Define mappings for medium and term
+    $medium_map = [
+        'sinhala' => 1,
+        'english' => 2,
+        'tamil' => 3
+    ];
+
+    $term_map = [
+        'I' => 1,
+        'II' => 2,
+        'III' => 3
+    ];
+
+    // Get medium_id and term_id
+    $medium_id = isset($medium_map[$medium]) ? $medium_map[$medium] : null;
+    $term_id = isset($term_map[$term]) ? $term_map[$term] : null;
+
+    // Check for invalid mappings
+    if ($medium_id === null || $term_id === null) {
+        show_error("Invalid medium or term provided.", 400);
+        return;
+    }
+
+    // Fetch records from the model
+    $this->load->model('User_model'); // Ensure the model is loaded
+    $data['records'] = $this->User_model->getRecentData($medium_id, $grade, $term_id);
+
+    // Load views
     $this->load->view('header');
-    $this->load->view('download',$data);
+    $this->load->view('download', $data);
     $this->load->view('footer');
 }
+
 
 public function login(){
     // Check if the user is already logged in
@@ -126,17 +157,7 @@ public function signin() {
     }
 }
 
-public function dashboard(){
-    $this->load->view('header');
-    $this->load->view('dashboard');
-    $this->load->view('footer');
-}
 
-public function papers(){
-    $this->load->view('header');
-    $this->load->view('papers');
-    $this->load->view('footer');
-}
 
 public function logout() {
     // Destroy session
@@ -155,38 +176,74 @@ public function upload(){
 
 public function upload_paper(){
      // Fetch form data
-     $medium = $this->input->post('medium');
-     $grade = $this->input->post('grade');
-     $term = $this->input->post('term');
+$medium = $this->input->post('medium');
+$grade = $this->input->post('grade');
+$term = $this->input->post('term');
+$filename = $this->input->post('filename');
+$year = $this->input->post('year');
+$name = $this->input->post('name');
 
-     // Configure upload settings
-     $config['upload_path'] = './uploads/';
-     $config['allowed_types'] = 'pdf|doc|docx|jpg|png'; // Allowed file types
-     $config['max_size']      = 2048; // Max size in KB (2MB)
+// Map medium to text
+$medium_text = '';
+if ($medium == 1) {
+    $medium_text = "English";
+} elseif ($medium == 2) {
+    $medium_text = "Sinhala";
+} elseif ($medium == 3) {
+    $medium_text = "Tamil";
+}
 
-     $this->upload->initialize($config);
+// Map term to text
+$term_text = '';
+if ($term == 1) {
+    $term_text = "I";
+} elseif ($term == 2) {
+    $term_text = "II";
+} elseif ($term == 3) {
+    $term_text = "III";
+}
 
-     if (!$this->upload->do_upload('file')) {
-        // Handle upload error
-        $error = $this->upload->display_errors();
-        echo '<p style="color:red;">' . $error . '</p>';
-    } else {
-        // File uploaded successfully
-        $uploadData = $this->upload->data();
+// Configure upload settings
+$config['upload_path'] = './uploads/';
+$config['allowed_types'] = 'pdf|doc|docx|jpg|png'; // Allowed file types
+$config['max_size']      = 2048; // Max size in KB (2MB)
 
-        // Save file and form information in the database
-        $data = [
-            'medium'    => $medium,
-            'grade'     => $grade,
-            'term'      => $term,
-            'file_name' => $uploadData['file_name'],
-            'file_path' => './uploads/' . $uploadData['file_name'],
-        ];
+$this->upload->initialize($config);
 
-        $this->User_model->insert_paper($data);
+if (!$this->upload->do_upload('file')) { // Ensure 'file' matches your form's file input name
+    // Handle upload error
+    $error = $this->upload->display_errors();
+    echo '<p style="color:red;">File Upload Failed: ' . $error . '</p>';
+} else {
+    // File uploaded successfully
+    $uploadData = $this->upload->data(); // Get upload data
 
-        echo '<p style="color:green;">File uploaded successfully!</p>';
-    }
+    // Generate new file name with extension
+    $new_file_name = $filename . "_" . $year . "_" . $grade . "_" . $medium_text . "_" . $term_text . $uploadData['file_ext'];
+    $new_file_path = $config['upload_path'] . $new_file_name;
+
+    // Rename uploaded file
+    rename($uploadData['full_path'], $new_file_path);
+
+    // Save file and form information in the database
+    $data = [
+        'name'    => $name,
+        'medium'    => $medium,
+        'grade'     => $grade,
+        'term'      => $term,
+        'year'      => $year,
+        'file_name' => $new_file_name,
+        'file_path' => $new_file_path,
+    ];
+
+    $this->User_model->insert_paper($data);
+     // Set flash data for success message
+     $this->session->set_flashdata('success', 'File uploaded and saved successfully!');
+
+     // Redirect to dashboard/papers
+     redirect('dashboard/papers');
+}
+
 }
 
 public function test(){
@@ -196,6 +253,25 @@ public function test(){
         echo "Upload folder is missing or not writable.";
     }
 }
+
+public function serveFile($fileId) {
+    // Load file details from the database using file ID
+    $file = $this->User_model->getFileById($fileId);
+
+    if (!$file) {
+        show_404(); // Show a 404 error if the file is not found
+    }
+
+    $filePath = './uploads/' . $file['file_name']; // Update path as per your setup
+
+    if (file_exists($filePath)) {
+        $this->load->helper('download');
+        force_download($filePath, null); // Serve the file for download
+    } else {
+        show_404(); // File doesn't exist
+    }
+}
+
         
 }
         
