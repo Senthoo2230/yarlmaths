@@ -11,14 +11,7 @@ class Dashboard_controller extends CI_Controller {
         $this->load->library('upload');
     }
 
-    public function dashboard(){
-        // Fetch the recent 5 uploads
-        $data['papers'] = $this->Papers_model->get_recent_papers();
-
-        $this->load->view('header',$data);
-        $this->load->view('dashboard',$data);
-        $this->load->view('footer',$data);
-    }
+    
         
 }
         

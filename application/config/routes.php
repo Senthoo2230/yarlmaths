@@ -54,17 +54,16 @@ $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 
 // Specific routes for `admin` come first
-$route['admin'] = 'User_controller/login';
-$route['admin/register'] = 'User_controller/register';
-$route['admin/signup'] = 'User_controller/signup';
-$route['admin/signin'] = 'User_controller/signin';
-$route['admin/logout'] = 'User_controller/logout';
-$route['dashboard'] = 'Dashboard_controller/dashboard';
-$route['dashboard/papers'] = 'Papers_controller/papers';
-$route['admin/upload'] = 'User_controller/upload';
-$route['paper/upload'] = 'User_controller/upload_paper';
-$route['test'] = 'User_controller/test';
-$route['serveFile/(:any)'] = 'User_controller/serveFile/$1';
+$route['admin'] = 'Admin_controller/login';
+$route['admin/register'] = 'Admin_controller/register';
+$route['admin/signup'] = 'Admin_controller/signup';
+$route['admin/signin'] = 'Admin_controller/signin';
+$route['admin/logout'] = 'Admin_controller/logout';
+$route['admin/dashboard'] = 'Admin_controller/dashboard';
+$route['admin/papers'] = 'Admin_controller/papers';
+$route['admin/upload'] = 'Admin_controller/upload';
+$route['paper/upload'] = 'Admin_controller/upload_paper';
+$route['serveFile/(:any)'] = 'Admin_controller/serveFile/$1';
 
 // Routes for `medium` and other specific patterns
 $route['medium'] = 'User_controller/medium';
