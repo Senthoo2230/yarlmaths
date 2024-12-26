@@ -32,7 +32,7 @@
             </div>
 
             <!-- Papers -->
-            <a href="<?php echo base_url('dashboard/papers'); ?>">
+            <a href="<?php echo base_url('admin/papers'); ?>">
                 <div class="bg-[#f6b53e] shadow-lg rounded-lg p-6 text-center flex flex-col items-center justify-center">
                     <p class="font-bold text-5xl">
                         820

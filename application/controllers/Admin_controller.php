@@ -85,7 +85,7 @@ class Admin_controller extends CI_Controller {
         // Fetch the recent 5 uploads
         $data['papers'] = $this->Admin_model->get_recent_papers();
         $this->load->view('layout/header',$data);
-        $this->load->view('admin/ashboard',$data);
+        $this->load->view('admin/dashboard',$data);
         $this->load->view('layout/footer',$data);
     }
 
@@ -147,57 +147,8 @@ class Admin_controller extends CI_Controller {
         }
     }
 
-    // Serves a file for download
-    public function serveFile($fileId) {
-        $file = $this->User_model->getFileById($fileId);
-
-        if (!$file) {
-            show_404();
-        }
-
-        $filePath = './uploads/' . $file['file_name'];
-
-        if (file_exists($filePath)) {
-            $this->load->helper('download');
-            force_download($filePath, null);
-        } else {
-            show_404();
-        }
-    }
-
-    // Handles file downloads
-    public function download($medium, $grade, $term) {
-        $data['medium'] = $medium;
-        $data['grade'] = $grade;
-        $data['term'] = $term;
-
-        $medium_map = [
-            'sinhala' => 1,
-            'english' => 2,
-            'tamil' => 3
-        ];
-
-        $term_map = [
-            'I' => 1,
-            'II' => 2,
-            'III' => 3
-        ];
-
-        $medium_id = $medium_map[$medium] ?? null;
-        $term_id = $term_map[$term] ?? null;
-
-        if ($medium_id === null || $term_id === null) {
-            show_error("Invalid medium or term provided.", 400);
-            return;
-        }
-
-        $this->load->model('User_model');
-        $data['records'] = $this->User_model->getRecentData($medium_id, $grade, $term_id);
-
-        $this->load->view('header');
-        $this->load->view('download', $data);
-        $this->load->view('footer');
-    }
+    
+   
 
 }
 

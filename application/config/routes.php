@@ -63,7 +63,7 @@ $route['admin/dashboard'] = 'Admin_controller/dashboard';
 $route['admin/papers'] = 'Admin_controller/papers';
 $route['admin/upload'] = 'Admin_controller/upload';
 $route['paper/upload'] = 'Admin_controller/upload_paper';
-$route['serveFile/(:any)'] = 'Admin_controller/serveFile/$1';
+$route['serveFile/(:any)'] = 'User_controller/serveFile/$1';
 
 // Routes for `medium` and other specific patterns
 $route['medium'] = 'User_controller/medium';
