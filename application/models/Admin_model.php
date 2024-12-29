@@ -38,6 +38,11 @@ public function get_recent_papers()
         return $this->db->get()->result_array();
     }
 
+    public function get_mediums() {
+        $query = $this->db->get('medium'); // Fetch data from 'medium' table
+        return $query->result(); // Return results as an array of objects
+    }
+
 }
                         
 /* End of file User_model.php */

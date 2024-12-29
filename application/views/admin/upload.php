@@ -29,9 +29,9 @@
                 <label for="medium" class="block mb-2 font-semibold">Select Medium</label>
                 <select id="medium" name="medium" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="" disabled selected>Choose Medium</option>
-                    <option value="1">English</option>
-                    <option value="2">Sinhala</option>
-                    <option value="3">Tamil</option>
+                    <?php foreach ($mediums as $medium): ?>
+                        <option value="<?= $medium->id ?>"><?= $medium->medium ?></option>
+                    <?php endforeach; ?>
                 </select>
             </div>
 

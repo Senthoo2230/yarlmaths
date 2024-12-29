@@ -98,9 +98,10 @@ class Admin_controller extends CI_Controller {
 
     // Loads the file upload page
     public function upload() {
-        $this->load->view('layout/header');
-        $this->load->view('admin/upload');
-        $this->load->view('layout/footer');
+        $data['mediums'] = $this->Admin_model->get_mediums();
+        $this->load->view('layout/header',$data);
+        $this->load->view('admin/upload',$data);
+        $this->load->view('layout/footer',$data);
     }
 
     // Handles file uploads and saves them
