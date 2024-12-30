@@ -36,39 +36,52 @@ public function term($medium,$grade){
     $this->load->view('user/term',$data);
     $this->load->view('layout/footer');
 }
- // Handles file downloads
- public function download($medium, $grade, $term) {
-    $data['medium'] = $medium;
-    $data['grade'] = $grade;
-    $data['term'] = $term;
+ 
+// Handles file downloads
+public function download($medium, $grade, $term) {
+    // Load the medium data from the database
+    $query = $this->db->get('medium');
+    $medium_map = [];
+    
+    if ($query->num_rows() > 0) {
+        foreach ($query->result() as $row) {
+            // Create a mapping of the medium name (lowercased) to its ID
+            $medium_map[strtolower($row->medium)] = $row->id;
+        }
+    }
 
-    $medium_map = [
-        'sinhala' => 1,
-        'english' => 2,
-        'tamil' => 3
-    ];
-
+    // Map terms to their IDs
     $term_map = [
         'I' => 1,
         'II' => 2,
         'III' => 3
     ];
 
-    $medium_id = $medium_map[$medium] ?? null;
+    // Find the IDs for medium and term
+    $medium_id = $medium_map[strtolower($medium)] ?? null;
     $term_id = $term_map[$term] ?? null;
 
+    // Validate the IDs
     if ($medium_id === null || $term_id === null) {
         show_error("Invalid medium or term provided.", 400);
         return;
     }
 
+    // Pass the parameters to the view
+    $data['medium'] = $medium;
+    $data['grade'] = $grade;
+    $data['term'] = $term;
+
+    // Load the User model and fetch the relevant records
     $this->load->model('User_model');
     $data['records'] = $this->User_model->getRecentData($medium_id, $grade, $term_id);
 
+    // Load the views
     $this->load->view('layout/header');
     $this->load->view('user/download', $data);
     $this->load->view('layout/footer');
 }
+
 
 // Serves a file for download
 public function serveFile($fileId) {

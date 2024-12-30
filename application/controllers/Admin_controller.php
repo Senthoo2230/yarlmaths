@@ -81,13 +81,35 @@ class Admin_controller extends CI_Controller {
     }
 
     // Dashboard Ui
-    public function dashboard(){
-        // Fetch the recent 5 uploads
-        $data['papers'] = $this->Admin_model->get_recent_papers();
-        $this->load->view('layout/header',$data);
-        $this->load->view('admin/dashboard',$data);
-        $this->load->view('layout/footer',$data);
+    public function dashboard()
+{
+    // Initialize the $medium_text array
+    $medium_text = [];
+
+    // Query the medium table to fetch all records
+    $query = $this->db->get('medium');
+
+    // Check if the query returned any results
+    if ($query && $query->num_rows() > 0) {
+        foreach ($query->result() as $row) {
+            $medium_text[$row->id] = $row->medium;
+        }
+    } else {
+        log_message('error', 'No data found in the medium table or query failed.');
     }
+
+    // Assign the medium_text array to the $data array
+    $data['medium_text'] = $medium_text;
+
+    // Fetch the recent 5 uploads using the Admin_model
+    $this->load->model('Admin_model'); // Ensure the Admin_model is loaded
+    $data['papers'] = $this->Admin_model->get_recent_papers();
+
+    // Load the views with the data
+    $this->load->view('layout/header', $data);
+    $this->load->view('admin/dashboard', $data);
+    $this->load->view('layout/footer', $data);
+}
 
     // Handles user logout
     public function logout() {
@@ -109,11 +131,17 @@ class Admin_controller extends CI_Controller {
         $medium = $this->input->post('medium');
         $grade = $this->input->post('grade');
         $term = $this->input->post('term');
-        $filename = $this->input->post('filename');
         $year = $this->input->post('year');
         $name = $this->input->post('name');
 
-        $medium_text = $medium == 1 ? "English" : ($medium == 2 ? "Sinhala" : "Tamil");
+        // Query the medium table to fetch the name for the given ID
+        $query = $this->db->get_where('medium', ['id' => $medium]);
+        if ($query->num_rows() > 0) {
+            $medium_text = $query->row()->medium; // Assuming the column name in the table is 'medium'
+        } else {
+            $medium_text = "Unknown"; // Default value if no matching record found
+        }
+
         $term_text = $term == 1 ? "I" : ($term == 2 ? "II" : "III");
 
         $config['upload_path'] = './uploads/';
@@ -127,7 +155,7 @@ class Admin_controller extends CI_Controller {
             echo '<p style="color:red;">File Upload Failed: ' . $error . '</p>';
         } else {
             $uploadData = $this->upload->data();
-            $new_file_name = $filename . "_" . $year . "_" . $grade . "_" . $medium_text . "_" . $term_text . $uploadData['file_ext'];
+            $new_file_name = $name . "_" . $year . "_" . $grade . "_" . $medium_text . "_" . $term_text . $uploadData['file_ext'];
             $new_file_path = $config['upload_path'] . $new_file_name;
 
             rename($uploadData['full_path'], $new_file_path);
