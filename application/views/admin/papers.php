@@ -24,24 +24,32 @@
                 <h2 class="text-lg font-bold mb-4 text-[#0b192c]">Filters</h2>
                 <!-- Filter by Grade -->
                 <select class="w-full mb-3 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#ff6500]">
-                    <option value="">Select Grade</option>
-                    <option value="Grade 1">Grade 1</option>
-                    <option value="Grade 2">Grade 2</option>
-                    <option value="Grade 3">Grade 3</option>
+                    <option hidden value="">Select Grade</option>
+                    
+                    <?php 
+                        // Static array of grades
+                        $grades = range(6, 13);
+                         foreach ($grades as $grade): ?>
+                            <option value="<?= $grade; ?>">Grade <?= $grade; ?></option>
+                    <?php endforeach; ?>
                 </select>
                 <!-- Filter by Term -->
                 <select class="w-full mb-3 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#ff6500]">
                     <option value="">Select Term</option>
-                    <option value="Term 1">Term 1</option>
-                    <option value="Term 2">Term 2</option>
-                    <option value="Term 3">Term 3</option>
+                    <option value="3">Term I</option>
+                    <option value="2">Term II</option>
+                    <option value="3">Term III</option>
                 </select>
                 <!-- Filter by Medium -->
                 <select class="w-full mb-3 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#ff6500]">
-                    <option value="">Select Medium</option>
-                    <option value="Tamil">Tamil</option>
-                    <option value="Sinhala">Sinhala</option>
-                    <option value="English">English</option>
+                    <option hidden value="">Select Medium</option>
+                    <?php
+                    foreach ($mediums as $medium) {
+                        ?>
+                            <option value="<?php echo $medium->id; ?>"><?php echo $medium->medium; ?></option>
+                        <?php
+                    }
+                    ?>
                 </select>
                 <!-- Filter Button -->
                 <button class="w-full bg-[#ff6500] text-white px-4 py-2 text-sm rounded-lg font-bold hover:bg-[#e05500]">

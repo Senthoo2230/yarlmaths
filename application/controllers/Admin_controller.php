@@ -27,6 +27,15 @@ class Admin_controller extends CI_Controller {
         $this->load->view('layout/footer');
     }
 
+    // Loads the registration page
+    public function papers() {
+        $mediums = $this->Admin_model->get_mediums();
+        $data['mediums'] = $mediums;
+        $this->load->view('layout/header',$data);
+        $this->load->view('admin/papers',$data);
+        $this->load->view('layout/footer',$data);
+    }
+
     // Handles user registration
     public function signup() {
         $this->form_validation->set_rules('username', 'Username', 'required');
